@@ -31,6 +31,11 @@ class Bucket
   property :created_at, DateTime
 end
 
+configure do
+  set :public_folder, 'yeoman/dist/'
+  set :static, true
+end
+
 get '/' do
 
   begin
@@ -44,7 +49,7 @@ get '/' do
   if params['device'] == 'gateway'
     Message.create :text => params['text']
   else
-    send_file File.expand_path('index.html', settings.public)
+    send_file File.expand_path('yeoman/dist/index.html', '.')
   end
 
 end
