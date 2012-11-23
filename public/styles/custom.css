@@ -1,0 +1,37 @@
+body {
+  background-image: url(http://subtlepatterns.subtlepatterns.netdna-cdn.com/patterns/gray_jean.png);
+  background-position: initial initial;
+  background-repeat: initial initial;
+}
+
+.container {
+  width: 1260px;
+}
+
+#recents {
+  overflow-y: auto
+}
+
+#selected {
+  overflow-y: auto
+}
+
+#favorites {
+  overflow-y: auto
+}
+
+#all {
+  overflow-y: auto
+}
+
+.row-fluid {
+  border-bottom: 1px solid #333;
+}
+
+.row-fluid .row {
+  padding:5px 15px;
+}
+
+.align-right {
+  text-align: right;
+}

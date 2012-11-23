@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'rubygems'
 require 'sinatra'
 require 'json'
@@ -29,7 +31,6 @@ class Message
   property :validated_at, DateTime
 
   property :is_valid, Boolean, :default => false
-  property :is_example, Boolean, :default => false
   property :is_favorite, Boolean, :default => false
 
   has n, :selections, :through => Resource
@@ -41,8 +42,8 @@ class Message
       :date => self.created_at,
       :hours => self.created_at.strftime("%H:%M"),
       :is_valid => self.is_valid,
-      :is_example => self.is_example,
-      :is_favorite => self.is_favorite
+      :is_favorite => self.is_favorite,
+      :is_hidden => self.tel.empty?
     }
     output[:phone_messages] = Message.all(:tel => self.tel).size
     output[:phone_valid_messages] = Message.all(:tel => self.tel, :is_valid => true).size
@@ -75,7 +76,6 @@ end
 # =============
 
 configure do
-  set :public_folder, 'yeoman/app/'
   set :static, true
 end
 
@@ -89,7 +89,7 @@ get '/' do
   if params['device'] == 'gateway'
     Message.create :msg => params['text'], :tel => params['tel']
   else
-    send_file File.expand_path('yeoman/dist/index.html', '.')
+    send_file File.expand_path('public/index.html', '.')
   end
 
 end
@@ -102,10 +102,6 @@ get '/selected.json' do
   return Selection.last.messages.to_json
 end
 
-get '/examples.json' do
-  return Message.all(:is_example => true).to_json
-end
-
 get '/recents.json' do
   return Message.all(:validated_at => nil).to_json
 end
@@ -114,49 +110,38 @@ get '/favorites.json' do
   return Message.all(:is_favorite => true).to_json
 end
 
+get '/all.json' do
+  return Message.all(:is_valid => true).to_json
+end
+
 # ================
 # Messages Actions
 # ================
 
-post '/select/:message' do
-  msg = Message.get(:message)
-  if msg
-    Selection.last.messages << msg
-    return {:status => "ok"}.to_json
-  else
-    not_found
-  end
-end
+post '/messages/:id' do
 
-post '/favorite/:message' do
-  msg = Message.get(:message)
-  if msg
-    msg.update(:is_favorite => true)
-    return {:status => "ok"}.to_json
-  else
-    not_found
-  end
-end
+  msg = Message.get(params[:id])
+  not_found unless msg
 
-post '/accept/:message' do
-  msg = Message.get(:message)
-  if msg
+  case params[:action]
+  when "select"
     msg.update(:is_valid => true, :validated_at => Time.now)
-    Selection.last.messages << msg
-    return {:status => "ok"}.to_json
-  else
-    not_found
-  end
-end
-
-post '/reject/:message' do
-  msg = Message.get(:message)
-  if msg
+    selection = Selection.last
+    selection.messages << msg
+    selection.save
+  when "favorite"
+    msg.update(:is_favorite => true)
+  when "unfavorite"
+    msg.update(:is_favorite => false)
+  when "reject"
+    selection = Selection.last
+    selection.messages.delete(msg)
+    selection.save
     msg.update(:is_valid => false, :validated_at => Time.now)
-    return {:status => "ok"}.to_json
-  else
-    not_found
   end
+
+  return {:status => "ok"}.to_json
+
 end
 
 # =================
@@ -164,8 +149,9 @@ end
 # =================
 
 get '/messages.txt' do
-  messages = Selection.last.messages
-  return "&vMessageListe=#{messages.join('|')}\n&vTxt_version=#{Selection.last.id}"
+  selection = Selection.last
+  messages = selection.messages
+  return "&vMessageListe=#{messages.map{|m| m.msg}.join('|')}\n&vTxt_version=#{Selection.last.id}"
 end
 
 post '/selection' do
@@ -177,8 +163,8 @@ end
 # ====
 
 get '/create_dummies' do
-  Message.create(:msg => "text1", :tel => "001122334455")
-  Message.create(:msg => "text2", :tel => "001122334455")
-  Message.create(:msg => "text3", :tel => "001122334455")
-  Message.create(:msg => "text4", :tel => "001122334455")
+  Message.create(:msg => "Vu des montage de Kinect (camera usb aussi) sur trépied si ça peut aider, faut contact ML tetalab, sinon je vois pas trop", :tel => "007")
+  Message.create(:tel => "007", :msg => "@tetalab sinon, vous faites un projet pour empreint numérique cette année ?")
+  Message.create(:tel => "007", :msg => "ouep, nickel un court panorama :)")
+  Message.create(:tel => "007", :msg => "#FF les assos présentes au #capitoledulibre le samedi 24/10, notamment @Wikimedia_Fr, @framasoft, @OSM_FR et #tetaneutral avec @lguerby")
 end
