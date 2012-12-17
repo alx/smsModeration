@@ -97,6 +97,10 @@ $("#hidden-numbers").live("click", function() {
   refreshRecent();
 });
 
+$("#refresh-recents").live("click", function() {
+  refreshRecent();
+});
+
 /******
  * Selected
  *****/
