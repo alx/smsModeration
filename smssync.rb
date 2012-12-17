@@ -14,6 +14,10 @@ require 'dm-timestamps'
 require 'dm-migrations'
 require 'dm-serializer'
 
+#log = File.new("sinatra.log", "a")
+#STDOUT.reopen(log)
+#STDERR.reopen(log)
+
 # ======
 # Models
 # ======
@@ -87,7 +91,7 @@ end
 get '/' do
 
   if params['device'] == 'gateway'
-    Message.create :msg => params['text'], :tel => params['tel']
+    Message.create :msg => params['text'], :tel => params['phone']
   else
     send_file File.expand_path('public/index.html', '.')
   end
@@ -99,11 +103,12 @@ end
 # =============
 
 get '/selected.json' do
-  return Selection.last.messages.to_json
+  selection = Selection.last
+  return {:id => selection.id, :messages => selection.messages}.to_json
 end
 
 get '/recents.json' do
-  return Message.all(:validated_at => nil).to_json
+  return Message.all(:validated_at => nil, :limit => 100).to_json
 end
 
 get '/favorites.json' do
@@ -111,7 +116,7 @@ get '/favorites.json' do
 end
 
 get '/all.json' do
-  return Message.all(:is_valid => true).to_json
+  return Message.all(:is_valid => true, :limit => 1000).to_json
 end
 
 # ================
@@ -151,7 +156,7 @@ end
 get '/messages.txt' do
   selection = Selection.last
   messages = selection.messages
-  return "&vMessageListe=#{messages.map{|m| m.msg}.join('|')}\n&vTxt_version=#{Selection.last.id}"
+  return "&vMessageListe=#{messages.map{|m| m.msg}.join('|').gsub("&", "et")}\n&vTxt_version=#{Selection.last.id}"
 end
 
 post '/selection' do

@@ -20,22 +20,28 @@
     <div class="container">
       <div class="row">
         <div class="span4">
-          <h2>Reçus <button id='hidden-numbers' class="btn btn-inverse" type="button"><i class='icon-ok icon-white'></i> Nº cachés</button></h2>
+          <h2>
+            <span id="nb-recents">0</span> 
+            <button id='hidden-numbers' class="btn btn-inverse" type="button"><i class='icon-ok icon-white'></i> 
+              Nº cachés</button> 
+            <button id='delete-received' class="btn btn-danger" type="button"><i class='icon-trash icon-white'></i></button>
+            <span id="recents-timeout">60</span>
+          </h2>
           <div id="recents" class="well"></div>
         </div>
         <div class="span4">
           <h2>
             <button class="btn disabled" type="button">Compteur: <span id="selected_count"></span></button> 
-            <button id="new-selection" class="btn btn-primary" type="button">Nouvelle Sélection</button>
+            <button id="new-selection" class="btn btn-primary" type="button">Nouvelle Sélection <span id="selected_id"></span></button>
           </h2>
           <div id="selected" class="well"></div>
         </div>
         <div class="span4">
-          <h2>Favoris</h2>
+          <h2><span id="nb-favorites">0</span></h2>
           <div id="favorites" class="well"></div>
         </div>
         <div class="span4">
-          <h2>Tous</h2>
+          <h2><span id="nb-all">0</span></h2>
           <div id="all" class="well"></div>
         </div>
     </div>

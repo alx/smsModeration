@@ -1,6 +1,7 @@
 //var root = "http://localhost:4567";
 var root = "";
 var displayHiddenNumbers = true;
+var timeout = 60;
 
 /******
  * Recents
@@ -8,6 +9,7 @@ var displayHiddenNumbers = true;
 
 var refreshRecent = function() {
 
+  $("#recents-timeout").html(timeout);
   $.getJSON(root + "/recents.json", function(json) {
 
     if(!displayHiddenNumbers) {
@@ -16,6 +18,19 @@ var refreshRecent = function() {
       });
     }
 
+//    var output = $.map(json, function(element) {
+//
+//      var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
+//      elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
+//      elementHtml += element.msg + "</div></div><div class='row align-right'>";
+//      elementHtml += "<span class='badge'>" + element.phone_valid_messages + "/" + element.phone_messages + "</span> ";
+//      elementHtml += "<button class='select btn btn-success' type='button'>Ok</button> ";
+//      elementHtml += "<button class='reject btn btn-danger' type='button'>No</button></div></div>";
+//
+//      return elementHtml;
+//    });
+//    $("#recents").html(output.join(""));
+//
     for(i = 0; i < json.length; i++) {
       var element = json[i];
 
@@ -29,6 +44,7 @@ var refreshRecent = function() {
         $("#recents").prepend(elementHtml);
       }
     }
+    $("#nb-recents").html(json.length);
   });
 
 }
@@ -52,6 +68,17 @@ $("#recents button.reject").live("click", function() {
     $(parent).remove();
     refreshSelected();
   });
+});
+
+$("#delete-received").live("click", function() {
+  $.each($("#recents .row-fluid"), function() {
+    var message = $(this);
+    var msgId = message.attr("id").split("-")[1];
+    $.post(root + "/messages/" + msgId, {action: 'reject'}, function() {
+      message.remove();
+    });
+  });
+  refreshSelected();
 });
 
 $("#hidden-numbers").live("click", function() {
@@ -78,8 +105,26 @@ var refreshSelected = function() {
 
   $.getJSON(root + "/selected.json", function(json) {
 
-    for(i = 0; i < json.length; i++) {
-      var element = json[i];
+//    var output = $.map(json.messages, function(element) {
+//      var elementHtml = "";
+//      if($("#selected #element-" + element.id).length == 0) {
+//        elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
+//        elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
+//        elementHtml += element.msg + "</div></div><div class='row align-right'>";
+//
+//        if(element.is_favorite) {
+//          elementHtml += "<button class='favorite btn btn-warning' type='button'><i class='icon-white icon-star'></i></button> ";
+//        } else {
+//          elementHtml += "<button class='favorite btn' type='button'><i class='icon-star'></i></button> ";
+//        }
+//
+//        elementHtml += "<button class='reject btn btn-danger' type='button'>No</button></div></div>";
+//      }
+//      return elementHtml;
+//    });
+//    $("#selected").html(output.join(""));
+    for(i = 0; i < json.messages.length; i++) {
+      var element = json.messages[i];
 
       if($("#selected #element-" + element.id).length == 0) {
         var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
@@ -97,7 +142,8 @@ var refreshSelected = function() {
       }
     }
 
-    $("#selected_count").html(json.length);
+    $("#selected_count").html(json.messages.length);
+    $("#selected_id").html(json.id);
   });
 
 }
@@ -167,6 +213,7 @@ var refreshFavorites = function() {
       elementHtml += "<button class='select btn btn-info' type='button'>Select</button></div></div>";
       $("#favorites").prepend(elementHtml);
     }
+    $("#nb-favorites").html(json.length);
 
   });
 
@@ -188,26 +235,27 @@ var refreshAll = function() {
 
   $("#all .row-fluid").remove();
 
-  $.getJSON(root + "/all.json", function(json) {
-
-    for(i = 0; i < json.length; i++) {
-      var element = json[i];
-
-      var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
-      elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
-      elementHtml += element.msg + "</div></div><div class='row align-right'>";
-
-      if(element.is_favorite) {
-        elementHtml += "<button class='favorite btn btn-warning' type='button'><i class='icon-white icon-star'></i></button> ";
-      } else {
-        elementHtml += "<button class='favorite btn' type='button'><i class='icon-star'></i></button> ";
-      }
-
-      elementHtml += "<button class='select btn btn-info' type='button'>Select</button></div></div>";
-      $("#all").prepend(elementHtml);
-    }
-
-  });
+//  $.getJSON(root + "/all.json", function(json) {
+//
+//    for(i = 0; i < json.length; i++) {
+//      var element = json[i];
+//
+//      var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
+//      elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
+//      elementHtml += element.msg + "</div></div><div class='row align-right'>";
+//
+//      if(element.is_favorite) {
+//        elementHtml += "<button class='favorite btn btn-warning' type='button'><i class='icon-white icon-star'></i></button> ";
+//      } else {
+//        elementHtml += "<button class='favorite btn' type='button'><i class='icon-star'></i></button> ";
+//      }
+//
+//      elementHtml += "<button class='select btn btn-info' type='button'>Select</button></div></div>";
+//      $("#all").prepend(elementHtml);
+//    }
+//    $("#nb-all").html(json.length);
+//
+//  });
 
 }
 
@@ -228,7 +276,8 @@ refreshSelected();
 refreshFavorites();
 refreshAll();
 
-setInterval(function(){refreshRecent()}, 1000);
+setInterval(function(){refreshRecent()}, timeout * 1000);
+setInterval(function(){$("#recents-timeout").html(parseInt($("#recents-timeout").html()) - 1)}, 1000);
 
 var windowHeight = $(window).height();
 var offset = 120;
