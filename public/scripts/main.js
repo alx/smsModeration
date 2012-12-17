@@ -235,7 +235,7 @@ var refreshAll = function() {
 
   $("#all .row-fluid").remove();
 
-//  $.getJSON(root + "/all.json", function(json) {
+  $.getJSON(root + "/all.json", function(json) {
 //
 //    for(i = 0; i < json.length; i++) {
 //      var element = json[i];
@@ -253,9 +253,9 @@ var refreshAll = function() {
 //      elementHtml += "<button class='select btn btn-info' type='button'>Select</button></div></div>";
 //      $("#all").prepend(elementHtml);
 //    }
-//    $("#nb-all").html(json.length);
-//
-//  });
+    $("#nb-all").html(json.length);
+
+  });
 
 }
 
