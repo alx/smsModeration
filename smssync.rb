@@ -98,6 +98,59 @@ get '/' do
 
 end
 
+# ==========
+# Stats JSON
+# ==========
+
+get '/stats.json' do
+
+  stats = {
+    :messages => Message.count,
+    :selected_messages => 0,
+    :selections => Selection.count,
+    :favorites => Message.count(:is_favorite => true),
+  }
+
+
+  stats[:selections_details] = []
+  Selection.all.each do |selection|
+    messages = selection.messages.size
+    stats[:selected_messages] += messages
+    stats[:selections_details] << {
+      :id => selection.id,
+      :messages => messages,
+      :created_at => selection.created_at
+    }
+  end
+
+  messages = Message.all
+  stats[:messages_details] = {
+    :first => {
+      :id => messages.first.id,
+      :created_at => messages.first.created_at
+    },
+    :last => {
+      :id => messages.last.id,
+      :created_at => messages.last.created_at
+    },
+    :count_5m => []
+  }
+  current_date = messages.first.created_at
+  last_date = messages.last.created_at
+  current_count = 1
+  messages.each do |msg|
+    if (msg.created_at.to_time.to_i - current_date.to_time.to_i) < 500
+      current_count += 1
+    else
+      stats[:messages_details][:count_5m] << current_count
+      current_count = 1
+      current_date = msg.created_at
+    end
+  end
+
+  return stats.to_json
+end
+
 # =============
 # Messages JSON
 # =============
