@@ -41,8 +41,21 @@
           <div id="favorites" class="well"></div>
         </div>
         <div class="span4">
-          <h2><span id="nb-all">0</span></h2>
-          <div id="all" class="well"></div>
+
+          <h2>Latest</h2>
+          <div id=latest" class="well"></div>
+
+          <a href="/stats.json">Stats</a>
+          <!--
+          <ul>
+            <li>All : <span id="stats-messages">0</span></li>
+            <li>Selected : <span id="stats-selected_messages">0</span></li>
+            <li>Selections : <span id="stats-selections">0</span></li>
+            <li>Favorites : <span id="stats-favorites">0</span></li>
+          </ul>
+
+          <div id="line"></div>
+          -->
         </div>
     </div>
 
@@ -51,6 +64,8 @@
         <![endif]-->
 
     <script src="scripts/vendor/jquery.min.js"></script>
+    <script src="scripts/vendor/raphael-min.js"></script>
+    <script src="scripts/vendor/morris.min.js"></script>
 
     <script src="scripts/vendor/bootstrap/bootstrap-affix.js"></script>
     <script src="scripts/vendor/bootstrap/bootstrap-alert.js"></script>

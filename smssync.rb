@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'sinatra'
 require 'json'
+require 'date'
 
 gem 'dm-core'
 gem 'dm-timestamps'
@@ -111,6 +112,50 @@ get '/stats.json' do
     :favorites => Message.count(:is_favorite => true),
   }
 
+  stats[:words] = {}
+  stats[:words][:aime] = Message.all.reject{|msg| msg.msg.index("aime").nil?}.size +
+                         Message.all.reject{|msg| msg.msg.index("amour").nil?}.size +
+                         Message.all.reject{|msg| msg.msg.index("<3").nil?}.size
+  stats[:words][:marriage] = Message.all.reject{|msg| msg.msg.index("epou").nil?}.size +
+                             Message.all.reject{|msg| msg.msg.index("mari").nil?}.size +
+                             Message.all.reject{|msg| msg.msg.index("femme").nil?}.size
+  stats[:words][:anniversaire] = Message.all.reject{|msg| msg.msg.index("anniversaire").nil?}.size
+  stats[:words][:paix] = Message.all.reject{|msg| msg.msg.index("paix").nil?}.size
+  stats[:words][:reve] = Message.all.reject{|msg| msg.msg.index("rêve").nil?}.size
+
+  first_date = DateTime.new(2012, 12, 15)
+  stats[:by_day] = {
+    :testing => {
+      :messages => Message.all(:created_at.lt => first_date).size,
+      :selections => Selection.all(:created_at.lt => first_date).size
+    },
+    :days => []
+  }
+  9.times do |day|
+    selections = Selection.all(:created_at.gt => first_date, :created_at.lt => first_date + 1)
+    selected = 0
+    message_count = Message.all(:created_at.gt => first_date, :created_at.lt => first_date + 1).size
+    selections.each do |selection|
+      selected += selection.messages.size
+    end
+
+    average = 0
+    ratio = 0
+    if selected != 0
+      average = (selected.to_f / selections.size.to_f ).to_i
+      ratio = ((selected.to_f / message_count.to_f ) * 100).to_i
+    end
+
+    stats[:by_day][:days] << {
+      :messages => message_count,
+      :selected => selected,
+      :selections => selections.size,
+      :average_selection => average,
+      :ratio_selected => ratio
+    }
+    first_date += 1
+  end
+
 
   stats[:selections_details] = []
   Selection.all.each do |selection|
@@ -148,6 +193,9 @@ get '/stats.json' do
     end
   end
 
+  stats[:morris] = []
+  today_messages = Message.all(:created_at.gt => Date.today)
+
   return stats.to_json
 end
 
@@ -169,7 +217,11 @@ get '/favorites.json' do
 end
 
 get '/all.json' do
-  return Message.all(:is_valid => true, :limit => 1000).to_json
+  return Message.all(:is_valid => true).to_json
+end
+
+get '/latest.json' do
+  return Message.all(:is_valid => true, :limit => 4, :order => [:created_at.desc]).to_json
 end
 
 # ================

@@ -239,7 +239,7 @@ var refreshAll = function() {
 
   $("#all .row-fluid").remove();
 
-  $.getJSON(root + "/all.json", function(json) {
+//  $.getJSON(root + "/all.json", function(json) {
 //
 //    for(i = 0; i < json.length; i++) {
 //      var element = json[i];
@@ -257,9 +257,8 @@ var refreshAll = function() {
 //      elementHtml += "<button class='select btn btn-info' type='button'>Select</button></div></div>";
 //      $("#all").prepend(elementHtml);
 //    }
-    $("#nb-all").html(json.length);
 
-  });
+//  });
 
 }
 
@@ -272,6 +271,76 @@ $("#all button.select").live("click", function() {
 });
 
 /******
+ * Latest
+ *****/
+
+var refreshLatest = function() {
+
+  $("#latest .row-fluid").remove();
+
+  $.getJSON(root + "/latest.json", function(json) {
+
+    for(i = 0; i < json.length; i++) {
+      var element = json[i];
+
+      var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
+      elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
+      elementHtml += element.msg + "</div></div><div class='row align-right'>";
+
+      if(element.is_favorite) {
+        elementHtml += "<button class='favorite btn btn-warning' type='button'><i class='icon-white icon-star'></i></button> ";
+      } else {
+        elementHtml += "<button class='favorite btn' type='button'><i class='icon-star'></i></button> ";
+      }
+
+      elementHtml += "<button class='select btn btn-info' type='button'>Select</button></div></div>";
+      $("#latest").prepend(elementHtml);
+    }
+
+  });
+
+}
+
+$("#latest button.select").live("click", function() {
+  var parent = $(this).parents(".row-fluid");
+  var msgId = parent.attr("id").split("-")[1];
+  $.post(root + "/messages/" + msgId, {action: 'select'}, function() {
+    refreshSelected();
+  });
+});
+
+/******
+ * Stats
+ *****/
+
+var refreshStats = function() {
+
+  $.getJSON(root + "/stats.json", function(json) {
+
+    $("#stats-messages").html(json.messages);
+    $("#stats-selected_messages").html(json.selected_messages);
+    $("#stats-selections").html(json.selections);
+    $("#stats-favorites").html(json.favorites);
+
+    Morris.Line({
+        element: 'line',
+        data: [
+          { y: '2006', a: 100, b: 90 },
+          { y: '2007', a: 75,  b: 65 },
+          { y: '2008', a: 50,  b: 40 },
+          { y: '2009', a: 75,  b: 65 },
+          { y: '2010', a: 50,  b: 40 },
+          { y: '2011', a: 75,  b: 65 },
+          { y: '2012', a: 100, b: 90 }
+      ],
+        xkey: 'y',
+        ykeys: ['a', 'b'],
+        labels: ['Received', 'Selected']
+    });
+  });
+}
+
+/******
  * Main
  *****/
 
@@ -279,6 +348,7 @@ refreshRecent();
 refreshSelected();
 refreshFavorites();
 refreshAll();
+refreshLatest();
 
 setInterval(function(){refreshRecent()}, timeout * 1000);
 setInterval(function(){$("#recents-timeout").html(parseInt($("#recents-timeout").html()) - 1)}, 1000);
