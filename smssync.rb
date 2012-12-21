@@ -99,9 +99,13 @@ get '/' do
 
 end
 
-# ==========
-# Stats JSON
-# ==========
+# =====
+# Stats
+# =====
+
+get '/stats' do 
+  erb :stats
+end
 
 get '/stats.json' do
 
