@@ -56,7 +56,6 @@ $("#recents button.select").live("click", function() {
   var msgId = parent.attr("id").split("-")[1];
   $.post(root + "/messages/" + msgId, {action: 'select'}, function() {
     $(parent).remove();
-    refreshAll();
     refreshSelected();
   });
 });
@@ -163,14 +162,12 @@ $("button.favorite").live("click", function() {
       button.removeClass('btn-warning');
       button.find('i').removeClass('icon-white');
       refreshFavorites();
-      refreshAll();
     });
   } else {
     $.post(root + "/messages/" + msgId, {action: 'favorite'}, function() {
       button.addClass('btn-warning');
       button.find('i').addClass('icon-white');
       refreshFavorites();
-      refreshAll();
     });
   }
 });
@@ -239,28 +236,32 @@ var refreshAll = function() {
 
   $("#all .row-fluid").remove();
 
-//  $.getJSON(root + "/all.json", function(json) {
-//
-//    for(i = 0; i < json.length; i++) {
-//      var element = json[i];
-//
-//      var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
-//      elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
-//      elementHtml += element.msg + "</div></div><div class='row align-right'>";
-//
-//      if(element.is_favorite) {
-//        elementHtml += "<button class='favorite btn btn-warning' type='button'><i class='icon-white icon-star'></i></button> ";
-//      } else {
-//        elementHtml += "<button class='favorite btn' type='button'><i class='icon-star'></i></button> ";
-//      }
-//
-//      elementHtml += "<button class='select btn btn-info' type='button'>Select</button></div></div>";
-//      $("#all").prepend(elementHtml);
-//    }
+  $.getJSON(root + "/all.json", function(json) {
 
-//  });
+    for(i = 0; i < json.length; i++) {
+      var element = json[i];
+
+      var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
+      elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
+      elementHtml += element.msg + "</div></div><div class='row align-right'>";
+
+      if(element.is_favorite) {
+        elementHtml += "<button class='favorite btn btn-warning' type='button'><i class='icon-white icon-star'></i></button> ";
+      } else {
+        elementHtml += "<button class='favorite btn' type='button'><i class='icon-star'></i></button> ";
+      }
+
+      elementHtml += "<button class='select btn btn-info' type='button'>Select</button></div></div>";
+      $("#all").prepend(elementHtml);
+    }
+
+  });
 
 }
+
+$("#display-all").live("click", function() {
+  refreshAll();
+});
 
 $("#all button.select").live("click", function() {
   var parent = $(this).parents(".row-fluid");
@@ -347,7 +348,6 @@ var refreshStats = function() {
 refreshRecent();
 refreshSelected();
 refreshFavorites();
-refreshAll();
 refreshLatest();
 
 setInterval(function(){refreshRecent()}, timeout * 1000);
