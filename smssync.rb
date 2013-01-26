@@ -54,6 +54,11 @@ class Message
     output[:phone_valid_messages] = Message.all(:tel => self.tel, :is_valid => true).size
     output
   end
+
+  def to_epoch
+    @created_at.to_time.to_i 
+  end
+
 end
 
 class Selection
@@ -99,12 +104,65 @@ get '/' do
 
 end
 
-# =====
-# Stats
-# =====
+# ==========
+# Stats JSON
+# ==========
 
-get '/stats' do 
-  erb :stats
+get '/gource.log' do
+
+  messages = []
+  
+  8.times do |i|
+
+    date_start = DateTime.new(2012, 12, 15 + i, 17, 30)
+    end_date = DateTime.new(2012, 12, 15 + i, 19, 30)
+    date_epoch = date_start.to_time.to_i
+
+    Message.all(:is_valid => true, :created_at.gt => date_start, :created_at.lt => end_date).each do |msg|
+
+      path = "#{date_start.strftime "%d_%m_%Y"}/"
+
+      if msg.is_valid
+        path += "#{msg.selections.first.id}"
+      else
+        path = ""
+      end
+
+      path += "/#{msg.msg}"
+
+      # Let them eat cake
+      # http://www.colourlovers.com/palette/49963/let_them_eat_cake
+      # background: 774F38
+      colors = ["ECE5CE", "E08E79", "F1D4AF", "C5E0DC"]
+
+      # (◕_”_◕)
+      # http://www.colourlovers.com/palette/848743/(%E2%97%95_%E2%80%9D_%E2%97%95)
+      # background: 490A3D
+      colors = ["8A9B0F", "BD1550", "F8CA00", "E97F02"]
+
+      color = colors[0]
+
+      text = msg.msg
+      if text =~ /aime|amour|<3/i
+        color = colors[1]
+      elsif text =~ /epous|mari|femme/i
+        color = colors[2]
+      elsif text =~ /anniversaire|paix|reve/i
+        color = colors[3]
+      end
+
+      date = msg.to_epoch - date_epoch
+      messages << [date, msg.tel, "A", path, color].join("|")
+
+    end
+
+  end
+
+  messages.sort! do |a, b|
+    a.split("|")[0].to_i <=> b.split("|")[0].to_i
+  end
+
+  return messages.join "\n"
 end
 
 get '/stats.json' do

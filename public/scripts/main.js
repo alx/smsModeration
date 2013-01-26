@@ -38,7 +38,14 @@ var refreshRecent = function() {
         var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
         elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
         elementHtml += element.msg + "</div></div><div class='row align-right'>";
-        elementHtml += "<span class='badge'>" + element.phone_valid_messages + "/" + element.phone_messages + "</span> ";
+        if(element.phone_valid_messages == 1) {
+          elementHtml += "<span class='badge badge-warning'>";
+        } else if(element.phone_valid_messages > 1) {
+          elementHtml += "<span class='badge badge-important'>";
+        } else {
+          elementHtml += "<span class='badge'>";
+        }
+        elementHtml += element.phone_valid_messages + "/" + element.phone_messages + "</span> ";
         elementHtml += "<button class='select btn btn-success' type='button'>Ok</button> ";
         elementHtml += "<button class='reject btn btn-danger' type='button'>No</button></div></div>";
         $("#recents").prepend(elementHtml);
