@@ -2,7 +2,7 @@
 
 Current installation of smsModeration is running on a *nix laptop with ruby install, and the sms are coming from an Android phone running SMS Gateway app.
 
-![Network Schema](/documentation/network.png)
+![Network Schema](https://raw.github.com/alx/smsModeration/master/documentation/network.png)
 
 # Moderation Interface Install
 
@@ -24,7 +24,7 @@ Now you can use your browser to connect to moderation interface: [http://localho
 
 If the moderation machine is on the network, you can connect from a browser on a different machine: [http://machine.ip:9393](http://machine.ip:9393)
 
-# Android SMS [[Gateway]]
+# Android SMS Gateway
 
 On the Android phone receiving the SMS, you need to install SMS Gateway app.
 
@@ -34,7 +34,7 @@ In this configuration, the device name need to be set to "gateway".
 
 # Using Moderation Interface
 
-![Moderation Interface](/documentation/moderation_interface.png)
+![Moderation Interface](https://raw.github.com/alx/smsModeration/master/documentation/moderation_interface.png)
 
 Moderation interface is composed by 4 columns.
 
@@ -73,7 +73,7 @@ You can add a message from this list to the current selection by pressing on the
 
 # Gource
 
-![Gource display](/documentation/grouce.png)
+![Gource display](https://raw.github.com/alx/smsModeration/master/documentation/grouce.png)
 
 It's possible to create a [gource](https://code.google.com/p/gource/) video to display the sms activity by using the script in the ```gource``` folder.
 
@@ -81,3 +81,9 @@ It's possible to create a [gource](https://code.google.com/p/gource/) video to d
 
 * [SMS Activity with Users](https://vimeo.com/58178587)
 * [SMS Activity without Users](https://vimeo.com/58249481)
+
+# Know issues
+
+* Current limitation to about 1 sms every 3 seconds on a HTC Desire. This could be due to gsm network or SMS Gateway application, more tests need to be done to improve this performance issue
+* This installation might not be gsm-contract-compliant, you might need to ask your gsm provider before abusing their network and risking getting your access down
+* Some issues opening the moderation interface on Windows
