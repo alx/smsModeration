@@ -1,0 +1,8 @@
+gource.*
+*.mkv
+*.mp4
+*.log
+*.ppm
+*.webm
+*.avi
+!gource.sh
