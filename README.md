@@ -1,3 +1,11 @@
+*smsModeration* is a complete installation to receive and moderate SMS before sending them to a custom display.
+
+It could be used during interactive exhibition when you need to check received SMS (for abuse, explicit language, ...) before to send them to public display.
+
+It uses a standard Android phone with a standard gsm contract, and a computer hosting the moderation interface.
+
+Some command-line knowledge might be required to complete the installation, feel free to contact me if you need some help.
+
 # Hardware requirements
 
 Current installation of smsModeration is running on a *nix laptop with ruby install, and the sms are coming from an Android phone running SMS Gateway app.
@@ -73,7 +81,7 @@ You can add a message from this list to the current selection by pressing on the
 
 # Gource
 
-![Gource display](https://raw.github.com/alx/smsModeration/master/documentation/grouce.png)
+![Gource display](https://raw.github.com/alx/smsModeration/master/documentation/gource.png)
 
 It's possible to create a [gource](https://code.google.com/p/gource/) video to display the sms activity by using the script in the ```gource``` folder.
 
