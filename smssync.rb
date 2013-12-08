@@ -339,10 +339,10 @@ get '/messages.txt' do
   return "&vMessageListe=#{messages.map{|m| m.msg}.join('|').gsub("&", "et")}\n&vTxt_version=#{Selection.last.id}"
 end
 
-get '/messages_1.txt' do
+get %r{/messages_(\d+).txt} do |list_index|
   selection = Selection.last
-  messages = selection.messages.select{|m| m.list_index == 1}
-  return "&vMessageListe=#{messages.map{|m| m.msg}.join('|').gsub("&", "et")}\n&vTxt_version=#{Selection.last.id}"
+  messages = selection.messages.all(:list_index => list_index)
+  return "&vMessageListe=#{messages.map{|m| m.msg}.join('|').gsub("&", "et")}\n&vTxt_version=#{Selection.last.id}&list_index=#{list_index}"
 end
 
 post '/selection' do
