@@ -144,7 +144,7 @@ var refreshSelected = function() {
       if($("#selected #element-" + element.id).length == 0) {
         var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'>";
         elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='row'>";
-        elementHtml += element.msg + "</div><div class='row align-right'>";
+        elementHtml += element.msg + " - " + element.list_index + "</div><div class='row align-right'>";
 
         elementHtml += "<span class='badge messageListSelector messageListSelector-1";
         if(element.list_index == 1) {

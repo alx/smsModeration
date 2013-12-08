@@ -51,7 +51,8 @@ class Message
       :hours => self.created_at.strftime("%H:%M"),
       :is_valid => self.is_valid,
       :is_favorite => self.is_favorite,
-      :is_hidden => self.tel.empty?
+      :is_hidden => self.tel.empty?,
+      :list_index => self.list_index
     }
     output[:phone_messages] = Message.all(:tel => self.tel).size
     output[:phone_valid_messages] = Message.all(:tel => self.tel, :is_valid => true).size
@@ -304,7 +305,7 @@ post '/messages/:id' do
     msg.update(:is_valid => true, :validated_at => Time.now)
 
     if params[:list]
-      msg.update(:list_index => params[:list])
+      msg.update(:list_index => params[:list_index])
     end
 
     selection = Selection.last
@@ -312,7 +313,7 @@ post '/messages/:id' do
     selection.save
 
   when "change_list"
-    msg.update(:list_index => params[:list])
+    msg.update(:list_index => params[:list_index])
   when "favorite"
     msg.update(:is_favorite => true)
   when "unfavorite"
