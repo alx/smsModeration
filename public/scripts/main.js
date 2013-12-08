@@ -46,8 +46,13 @@ var refreshRecent = function() {
           elementHtml += "<span class='badge'>";
         }
         elementHtml += element.phone_valid_messages + "/" + element.phone_messages + "</span> ";
-        elementHtml += "<button class='select btn btn-success' type='button'>Ok</button> ";
-        elementHtml += "<button class='reject btn btn-danger' type='button'>No</button></div></div>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-1'>1</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-2'>2</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-3'>3</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-4'>4</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-5'>5</span>";
+        elementHtml += "<button class='select btn btn-mini btn-success' type='button'><i class='icon-home icon-white'></i></button> ";
+        elementHtml += "<button class='reject btn btn-mini btn-danger' type='button'><i class='icon-trash icon-white'></i></button></div></div>";
         $("#recents").prepend(elementHtml);
       }
     }
@@ -137,17 +142,47 @@ var refreshSelected = function() {
       var element = json.messages[i];
 
       if($("#selected #element-" + element.id).length == 0) {
-        var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
-        elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
-        elementHtml += element.msg + "</div></div><div class='row align-right'>";
+        var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'>";
+        elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='row'>";
+        elementHtml += element.msg + "</div><div class='row align-right'>";
+
+        elementHtml += "<span class='badge messageListSelector messageListSelector-1";
+        if(element.list_index == 1) {
+          elementHtml += "active";
+        }
+        elementHtml += "'>1</span>";
+
+        elementHtml += "<span class='badge messageListSelector messageListSelector-2";
+        if(element.list_index == 2) {
+          elementHtml += "active";
+        }
+        elementHtml += "'>2</span>";
+
+        elementHtml += "<span class='badge messageListSelector messageListSelector-3";
+        if(element.list_index == 3) {
+          elementHtml += "active";
+        }
+        elementHtml += "'>3</span>";
+
+        elementHtml += "<span class='badge messageListSelector messageListSelector-4";
+        if(element.list_index == 4) {
+          elementHtml += "active";
+        }
+        elementHtml += "'>4</span>";
+
+        elementHtml += "<span class='badge messageListSelector messageListSelector-5";
+        if(element.list_index == 5) {
+          elementHtml += "active";
+        }
+        elementHtml += "'>5</span>";
 
         if(element.is_favorite) {
-          elementHtml += "<button class='favorite btn btn-warning' type='button'><i class='icon-white icon-star'></i></button> ";
+          elementHtml += "<button class='favorite btn btn-warning btn-mini' type='button'><i class='icon-white icon-star'></i></button> ";
         } else {
-          elementHtml += "<button class='favorite btn' type='button'><i class='icon-star'></i></button> ";
+          elementHtml += "<button class='favorite btn btn-mini' type='button'><i class='icon-star'></i></button> ";
         }
 
-        elementHtml += "<button class='reject btn btn-danger' type='button'>No</button></div></div>";
+        elementHtml += "<button class='reject btn btn-danger btn-mini' type='button'><i class='icon-trash icon-white'></i></button></div></div>";
         $("#selected").prepend(elementHtml);
       }
     }
@@ -157,6 +192,17 @@ var refreshSelected = function() {
   });
 
 }
+
+$('#selected .messageListSelector').live('click', function() {
+  var button = $(this);
+  var parent = button.parents(".row-fluid");
+  var msgId = parent.attr("id").split("-")[1];
+
+  $.post(root + "/messages/" + msgId, {action: 'changeList', list_index: button.html()}, function() {
+    parent.find('.messageListSelector').removeClass('active');
+    button.addClass('active');
+  });
+});
 
 $("button.favorite").live("click", function() {
   var button = $(this);
@@ -313,6 +359,14 @@ $("#latest button.select").live("click", function() {
   var parent = $(this).parents(".row-fluid");
   var msgId = parent.attr("id").split("-")[1];
   $.post(root + "/messages/" + msgId, {action: 'select'}, function() {
+    refreshSelected();
+  });
+});
+
+$("#latest .messageListSelector").live("click", function() {
+  var parent = $(this).parents(".row-fluid");
+  var msgId = parent.attr("id").split("-")[1];
+  $.post(root + "/messages/" + msgId, {action: 'select', list: $(this).html()}, function() {
     refreshSelected();
   });
 });

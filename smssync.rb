@@ -4,6 +4,7 @@ require 'rubygems'
 require 'sinatra'
 require 'json'
 require 'date'
+require 'net/http'
 
 gem 'dm-core'
 gem 'dm-timestamps'
@@ -37,6 +38,8 @@ class Message
 
   property :is_valid, Boolean, :default => false
   property :is_favorite, Boolean, :default => false
+
+  property :list_index, Integer, :default => 0
 
   has n, :selections, :through => Resource
 
@@ -297,10 +300,19 @@ post '/messages/:id' do
 
   case params[:action]
   when "select"
+
     msg.update(:is_valid => true, :validated_at => Time.now)
+
+    if params[:list]
+      msg.update(:list_index => params[:list])
+    end
+
     selection = Selection.last
     selection.messages << msg
     selection.save
+
+  when "change_list"
+    msg.update(:list_index => params[:list])
   when "favorite"
     msg.update(:is_favorite => true)
   when "unfavorite"
@@ -326,6 +338,12 @@ get '/messages.txt' do
   return "&vMessageListe=#{messages.map{|m| m.msg}.join('|').gsub("&", "et")}\n&vTxt_version=#{Selection.last.id}"
 end
 
+get '/messages_1.txt' do
+  selection = Selection.last
+  messages = selection.messages.select{|m| m.list_index == 1}
+  return "&vMessageListe=#{messages.map{|m| m.msg}.join('|').gsub("&", "et")}\n&vTxt_version=#{Selection.last.id}"
+end
+
 post '/selection' do
   Selection.create
 end
@@ -339,4 +357,27 @@ get '/create_dummies' do
   Message.create(:tel => "007", :msg => "@tetalab sinon, vous faites un projet pour empreint numérique cette année ?")
   Message.create(:tel => "007", :msg => "ouep, nickel un court panorama :)")
   Message.create(:tel => "007", :msg => "#FF les assos présentes au #capitoledulibre le samedi 24/10, notamment @Wikimedia_Fr, @framasoft, @OSM_FR et #tetaneutral avec @lguerby")
+end
+
+# ====
+# Esendex
+# ====
+
+get '/fetch_messages' do
+  Net::HTTP.start('api.esendex.com', 80) {|http|
+    req = Net::HTTP::Get.new('/v1.0/inbox/messages')
+    req.basic_auth '', ''
+    response = http.request(req)
+    return response.body
+  }
+end
+
+
+get '/send_messages' do
+  Net::HTTP.start('api.esendex.com', 80) {|http|
+    req = Net::HTTP::Post.new('/v1.0/messagedispatcher')
+    req.basic_auth '', ''
+    response = http.request(req)
+    return response.body
+  }
 end
