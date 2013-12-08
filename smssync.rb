@@ -304,7 +304,7 @@ post '/messages/:id' do
 
     msg.update(:is_valid => true, :validated_at => Time.now)
 
-    if params[:list]
+    if params[:list_index]
       msg.update(:list_index => params[:list_index])
     end
 

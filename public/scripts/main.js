@@ -35,7 +35,7 @@ var refreshRecent = function() {
       var element = json[i];
 
       if($("#recents #element-" + element.id).length == 0) {
-        var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
+        var elementHtml = "<div id='element-" + element.id + "' class='row-fluid message'><div class='row'><div class='span2'>";
         elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
         elementHtml += element.msg + "</div></div><div class='row align-right'>";
         if(element.phone_valid_messages == 1) {
@@ -64,7 +64,7 @@ var refreshRecent = function() {
 $("#recents-refresh").live("click", function() { refreshRecent(); });
 
 $("#recents button.select").live("click", function() {
-  var parent = $(this).parents(".row-fluid");
+  var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
   $.post(root + "/messages/" + msgId, {action: 'select'}, function() {
     $(parent).remove();
@@ -72,8 +72,17 @@ $("#recents button.select").live("click", function() {
   });
 });
 
+$("#recents .messageListSelector").live("click", function() {
+  var parent = $(this).parents(".message");
+  var msgId = parent.attr("id").split("-")[1];
+  $.post(root + "/messages/" + msgId, {action: 'select', list_index: $(this).html()}, function() {
+    $(parent).remove();
+    refreshSelected();
+  });
+});
+
 $("#recents button.reject").live("click", function() {
-  var parent = $(this).parents(".row-fluid");
+  var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
   $.post(root + "/messages/" + msgId, {action: 'reject'}, function() {
     $(parent).remove();
@@ -82,7 +91,7 @@ $("#recents button.reject").live("click", function() {
 });
 
 $("#delete-received").live("click", function() {
-  $.each($("#recents .row-fluid"), function() {
+  $.each($("#recents .message"), function() {
     var message = $(this);
     var msgId = message.attr("id").split("-")[1];
     $.post(root + "/messages/" + msgId, {action: 'reject'}, function() {
@@ -142,37 +151,37 @@ var refreshSelected = function() {
       var element = json.messages[i];
 
       if($("#selected #element-" + element.id).length == 0) {
-        var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'>";
+        var elementHtml = "<div id='element-" + element.id + "' class='row-fluid message'><div class='row'>";
         elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='row'>";
-        elementHtml += element.msg + " - " + element.list_index + "</div><div class='row align-right'>";
+        elementHtml += element.msg + "</div><div class='row align-right'>";
 
         elementHtml += "<span class='badge messageListSelector messageListSelector-1";
         if(element.list_index == 1) {
-          elementHtml += "active";
+          elementHtml += " active";
         }
         elementHtml += "'>1</span>";
 
         elementHtml += "<span class='badge messageListSelector messageListSelector-2";
         if(element.list_index == 2) {
-          elementHtml += "active";
+          elementHtml += " active";
         }
         elementHtml += "'>2</span>";
 
         elementHtml += "<span class='badge messageListSelector messageListSelector-3";
         if(element.list_index == 3) {
-          elementHtml += "active";
+          elementHtml += " active";
         }
         elementHtml += "'>3</span>";
 
         elementHtml += "<span class='badge messageListSelector messageListSelector-4";
         if(element.list_index == 4) {
-          elementHtml += "active";
+          elementHtml += " active";
         }
         elementHtml += "'>4</span>";
 
         elementHtml += "<span class='badge messageListSelector messageListSelector-5";
         if(element.list_index == 5) {
-          elementHtml += "active";
+          elementHtml += " active";
         }
         elementHtml += "'>5</span>";
 
@@ -195,10 +204,10 @@ var refreshSelected = function() {
 
 $('#selected .messageListSelector').live('click', function() {
   var button = $(this);
-  var parent = button.parents(".row-fluid");
+  var parent = button.parents(".message");
   var msgId = parent.attr("id").split("-")[1];
 
-  $.post(root + "/messages/" + msgId, {action: 'changeList', list_index: button.html()}, function() {
+  $.post(root + "/messages/" + msgId, {action: 'change_list', list_index: button.html()}, function() {
     parent.find('.messageListSelector').removeClass('active');
     button.addClass('active');
   });
@@ -206,7 +215,7 @@ $('#selected .messageListSelector').live('click', function() {
 
 $("button.favorite").live("click", function() {
   var button = $(this);
-  var parent = button.parents(".row-fluid");
+  var parent = button.parents(".message");
   var msgId = parent.attr("id").split("-")[1];
 
   // Message is already favorite
@@ -226,7 +235,7 @@ $("button.favorite").live("click", function() {
 });
 
 $("#selected button.reject").live("click", function() {
-  var parent = $(this).parents(".row-fluid");
+  var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
   $.post(root + "/messages/" + msgId, {action: 'reject'}, function() {
     $(parent).remove();
@@ -236,7 +245,7 @@ $("#selected button.reject").live("click", function() {
 
 $("#new-selection").live("click", function() {
   $.post(root + "/selection", function() {
-    $("#selected .row-fluid").remove();
+    $("#selected .message").remove();
     refreshSelected();
   })
 });
@@ -247,14 +256,14 @@ $("#new-selection").live("click", function() {
 
 var refreshFavorites = function() {
 
-  $("#favorites .row-fluid").remove();
+  $("#favorites .message").remove();
 
   $.getJSON(root + "/favorites.json", function(json) {
 
     for(i = 0; i < json.length; i++) {
       var element = json[i];
 
-      var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
+      var elementHtml = "<div id='element-" + element.id + "' class='row-fluid message'><div class='row'><div class='span2'>";
       elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
       elementHtml += element.msg + "</div></div><div class='row align-right'>";
 
@@ -274,7 +283,7 @@ var refreshFavorites = function() {
 }
 
 $("#favorites button.select").live("click", function() {
-  var parent = $(this).parents(".row-fluid");
+  var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
   $.post(root + "/messages/" + msgId, {action: 'select'}, function() {
     refreshSelected();
@@ -287,14 +296,14 @@ $("#favorites button.select").live("click", function() {
 
 var refreshAll = function() {
 
-  $("#all .row-fluid").remove();
+  $("#all .message").remove();
 
   $.getJSON(root + "/all.json", function(json) {
 
     for(i = 0; i < json.length; i++) {
       var element = json[i];
 
-      var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
+      var elementHtml = "<div id='element-" + element.id + "' class='row-fluid message'><div class='row'><div class='span2'>";
       elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
       elementHtml += element.msg + "</div></div><div class='row align-right'>";
 
@@ -317,9 +326,17 @@ $("#display-all").live("click", function() {
 });
 
 $("#all button.select").live("click", function() {
-  var parent = $(this).parents(".row-fluid");
+  var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
   $.post(root + "/messages/" + msgId, {action: 'select'}, function() {
+    refreshSelected();
+  });
+});
+
+$("#all .messageListSelector").live("click", function() {
+  var parent = $(this).parents(".message");
+  var msgId = parent.attr("id").split("-")[1];
+  $.post(root + "/messages/" + msgId, {action: 'select', list_index: $(this).html()}, function() {
     refreshSelected();
   });
 });
@@ -337,7 +354,7 @@ var refreshLatest = function() {
     for(i = 0; i < json.length; i++) {
       var element = json[i];
 
-      var elementHtml = "<div id='element-" + element.id + "' class='row-fluid'><div class='row'><div class='span2'>";
+      var elementHtml = "<div id='element-" + element.id + "' class='row-fluid message'><div class='row'><div class='span2'>";
       elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
       elementHtml += element.msg + "</div></div><div class='row align-right'>";
 
@@ -356,7 +373,7 @@ var refreshLatest = function() {
 }
 
 $("#latest button.select").live("click", function() {
-  var parent = $(this).parents(".row-fluid");
+  var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
   $.post(root + "/messages/" + msgId, {action: 'select'}, function() {
     refreshSelected();
@@ -364,9 +381,9 @@ $("#latest button.select").live("click", function() {
 });
 
 $("#latest .messageListSelector").live("click", function() {
-  var parent = $(this).parents(".row-fluid");
+  var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
-  $.post(root + "/messages/" + msgId, {action: 'select', list: $(this).html()}, function() {
+  $.post(root + "/messages/" + msgId, {action: 'select', list_index: $(this).html()}, function() {
     refreshSelected();
   });
 });
