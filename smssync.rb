@@ -16,9 +16,20 @@ require 'dm-timestamps'
 require 'dm-migrations'
 require 'dm-serializer'
 
+require 'nokogiri'
+require 'yaml'
+
 #log = File.new("sinatra.log", "a")
 #STDOUT.reopen(log)
 #STDERR.reopen(log)
+
+# ============
+# Esendex conf
+# ============
+
+if File.file? "esendex.yml"
+  esendex_conf = YAML.load_file("esendex.yml")
+end
 
 # ======
 # Models
@@ -365,12 +376,43 @@ end
 # ====
 
 get '/fetch_messages' do
-  Net::HTTP.start('api.esendex.com', 80) {|http|
-    req = Net::HTTP::Get.new('/v1.0/inbox/messages')
-    req.basic_auth '', ''
-    response = http.request(req)
-    return response.body
-  }
+
+  auth = esendex_conf["auth"]
+  http = Net::HTTP.new('api.esendex.com', 80)
+
+  req = Net::HTTP::Get.new('/v1.0/inbox/messages')
+  req.basic_auth auth["login"], auth["pass"]
+  response = http.request(req)
+  doc = Nokogiri.XML(response.body)
+
+  count = doc.at('messageheaders').attribute('count').text().to_i
+
+  if count > 0
+
+    doc.css('messageheader').each do |message|
+
+      body_uri = message.at('body').attribute('uri').text.gsub("http://api.esendex.com", "")
+      req = Net::HTTP::Get.new(body_uri)
+      req.basic_auth auth["login"], auth["pass"]
+      response = http.request(req)
+
+      body = Nokogiri.XML(response.body)
+      esendex_id = message.attribute('id').text
+
+      Message.create (
+        :msg => body.at("bodytext").text,
+        :tel => message.at('from phonenumber').text
+      )
+
+      req = Net::HTTP::Delete.new("/v1.0/inbox/messages/#{esendex_id}")
+      req.basic_auth auth["login"], auth["pass"]
+      response = http.request(req)
+
+    end
+
+  end
+
+  return count
 end
 
 

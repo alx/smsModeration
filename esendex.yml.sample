@@ -1,0 +1,4 @@
+---
+auth:
+  login: esendex_login
+  pass: esendex_pass
