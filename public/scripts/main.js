@@ -476,6 +476,8 @@ refreshLatest();
 setInterval(function(){refreshRecent()}, timeout * 1000);
 setInterval(function(){$("#recents-timeout").html(parseInt($("#recents-timeout").html()) - 1)}, 1000);
 
+setInterval(function(){$.getJSON(root + "/fetch_messages");}, timeout / 3 * 1000);
+
 var windowHeight = $(window).height();
 var offset = 120;
 $("#recents").css("max-height", windowHeight - offset);
