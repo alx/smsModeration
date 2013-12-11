@@ -66,7 +66,7 @@ $("#recents-refresh").live("click", function() { refreshRecent(); });
 $("#recents button.select").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
-  $.post(root + "/messages/" + msgId, {action: 'select'}, function() {
+  $.post(root + "/messages/" + msgId, {action: 'select', list_index: findListIndex()}, function() {
     $(parent).remove();
     refreshSelected();
   });
@@ -306,7 +306,7 @@ var refreshFavorites = function() {
 $("#favorites button.select").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
-  $.post(root + "/messages/" + msgId, {action: 'select'}, function() {
+  $.post(root + "/messages/" + msgId, {action: 'select', list_index: findListIndex()}, function() {
     refreshSelected();
   });
 });
@@ -363,7 +363,7 @@ $("#display-all").live("click", function() {
 $("#all button.select").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
-  $.post(root + "/messages/" + msgId, {action: 'select'}, function() {
+  $.post(root + "/messages/" + msgId, {action: 'select', list_index: findListIndex()}, function() {
     refreshSelected();
   });
 });
@@ -410,7 +410,7 @@ var refreshLatest = function() {
 $("#latest button.select").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
-  $.post(root + "/messages/" + msgId, {action: 'select'}, function() {
+  $.post(root + "/messages/" + msgId, {action: 'select', list_index: findListIndex()}, function() {
     refreshSelected();
   });
 });
