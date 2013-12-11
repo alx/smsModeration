@@ -377,7 +377,7 @@ end
 # Esendex
 # ====
 
-get '/fetch_messages' do
+def fetch_messages
 
   auth = esendex_conf["auth"]
   http = Net::HTTP.new('api.esendex.com', 80)
@@ -406,14 +406,18 @@ get '/fetch_messages' do
         :tel => message.at('from phonenumber').text
       )
 
-      #req = Net::HTTP::Delete.new("/v1.0/inbox/messages/#{esendex_id}")
-      #req.basic_auth auth["login"], auth["pass"]
-      #response = http.request(req)
+      req = Net::HTTP::Delete.new("/v1.0/inbox/messages/#{esendex_id}")
+      req.basic_auth auth["login"], auth["pass"]
+      response = http.request(req)
 
     end
 
   end
 
+end
+
+get '/fetch_messages' do
+  fetch_messages
   return 200
 end
 
