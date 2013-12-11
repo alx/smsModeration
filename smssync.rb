@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+gem 'multi_json', '=1.7.8'
+
 require 'rubygems'
 require 'sinatra'
 require 'json'
