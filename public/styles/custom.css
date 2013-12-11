@@ -64,33 +64,9 @@ body {
   margin-right: 1px;
 }
 
-/*
-Color brewer Set2 :
-["#66c2a5","#fc8d62","#8da0cb","#e78ac3","#a6d854"]
-*/
-.messageListSelector-1:hover,
-.messageListSelector-1.active {
-  background-color:#66c2a5;
-}
-
-.messageListSelector-2:hover,
-.messageListSelector-2.active {
+.messageListSelector:hover,
+.messageListSelector.active {
   background-color:#fc8d62;
-}
-
-.messageListSelector-3:hover,
-.messageListSelector-3.active {
-  background-color:#8da0cb;
-}
-
-.messageListSelector-4:hover,
-.messageListSelector-4.active {
-  background-color:#e78ac3;
-}
-
-.messageListSelector-5:hover,
-.messageListSelector-5.active {
-  background-color:#a6d854;
 }
 
 .list_title {
@@ -100,11 +76,11 @@ Color brewer Set2 :
 
 .list_title h3 {
   display: inline;
+  font-size: 18px;
 }
 
-.list_title input {
-  margin-top: 10px;
-  width: 50%;
+.list_title .display_list {
+  cursor: pointer;
 }
 
 input.quota {

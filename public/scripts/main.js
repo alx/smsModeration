@@ -46,13 +46,19 @@ var refreshRecent = function() {
           elementHtml += "<span class='badge'>";
         }
         elementHtml += element.phone_valid_messages + "/" + element.phone_messages + "</span> ";
-        elementHtml += "<span class='badge messageListSelector messageListSelector-1'>1</span>";
+        elementHtml += "<button class='select btn btn-mini btn-success' type='button'><i class='icon-home icon-white'></i></button> ";
+        elementHtml += "<button class='reject btn btn-mini btn-danger' type='button'><i class='icon-trash icon-white'></i></button></div>";
+
+        elementHtml += "<div class='row align-right'><span class='badge messageListSelector messageListSelector-1'>1</span>";
         elementHtml += "<span class='badge messageListSelector messageListSelector-2'>2</span>";
         elementHtml += "<span class='badge messageListSelector messageListSelector-3'>3</span>";
         elementHtml += "<span class='badge messageListSelector messageListSelector-4'>4</span>";
         elementHtml += "<span class='badge messageListSelector messageListSelector-5'>5</span>";
-        elementHtml += "<button class='select btn btn-mini btn-success' type='button'><i class='icon-home icon-white'></i></button> ";
-        elementHtml += "<button class='reject btn btn-mini btn-danger' type='button'><i class='icon-trash icon-white'></i></button></div></div>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-6'>6</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-7'>7</span></div>";
+
+        elementHtml += "</div>";
+
         $("#recents").prepend(elementHtml);
       }
     }
@@ -127,7 +133,7 @@ $("#refresh-recents").live("click", function() {
 
 var updateListCount = function() {
   $('#selected_count_all').html($('#selected .message').length);
-  for(i = 1; i <= 5; i++){
+  for(i = 1; i <= 7; i++){
     var listCount = $('#selected_count_list_' + i);
     listCount.removeClass('warning over');
 
@@ -142,15 +148,18 @@ var updateListCount = function() {
   }
 }
 
+/*
+ * find a possible list where to put a new message.
+ * if no list found, wend this message to list 6
+ */
 var findListIndex = function() {
-  var list = 5;
-  for(i = 1; i <= 5; i++) {
+  for(i = 1; i <= 6; i++) {
     if( !$('#selected_count_list_' + i).hasClass('warning') &&
         !$('#selected_count_list_' + i).hasClass('over') ) {
-      list = i;
+      return i;
     }
   }
-  return list;
+  return 6;
 }
 
 var refreshSelected = function() {
@@ -186,19 +195,24 @@ var refreshSelected = function() {
         elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='row'>";
         elementHtml += element.msg + "</div><div class='row align-right'>";
 
-        elementHtml += "<span class='badge messageListSelector messageListSelector-1'>1</span>";
-        elementHtml += "<span class='badge messageListSelector messageListSelector-2'>2</span>";
-        elementHtml += "<span class='badge messageListSelector messageListSelector-3'>3</span>";
-        elementHtml += "<span class='badge messageListSelector messageListSelector-4'>4</span>";
-        elementHtml += "<span class='badge messageListSelector messageListSelector-5'>5</span>";
-
         if(element.is_favorite) {
           elementHtml += "<button class='favorite btn btn-warning btn-mini' type='button'><i class='icon-white icon-star'></i></button> ";
         } else {
           elementHtml += "<button class='favorite btn btn-mini' type='button'><i class='icon-star'></i></button> ";
         }
 
-        elementHtml += "<button class='reject btn btn-danger btn-mini' type='button'><i class='icon-trash icon-white'></i></button></div></div>";
+        elementHtml += "<button class='reject btn btn-danger btn-mini' type='button'><i class='icon-trash icon-white'></i></button></div>";
+
+        elementHtml += "<div class='row align-right'><span class='badge messageListSelector messageListSelector-1'>1</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-2'>2</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-3'>3</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-4'>4</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-5'>5</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-6'>6</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-7'>7</span></div>";
+
+        elementHtml += "</div>";
+
         $("#selected").prepend(elementHtml);
 
         if(element.list_index > 0) {
@@ -282,19 +296,24 @@ var refreshFavorites = function() {
       elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
       elementHtml += element.msg + "</div></div><div class='row align-right'>";
 
-      elementHtml += "<span class='badge messageListSelector messageListSelector-1'>1</span>";
-      elementHtml += "<span class='badge messageListSelector messageListSelector-2'>2</span>";
-      elementHtml += "<span class='badge messageListSelector messageListSelector-3'>3</span>";
-      elementHtml += "<span class='badge messageListSelector messageListSelector-4'>4</span>";
-      elementHtml += "<span class='badge messageListSelector messageListSelector-5'>5</span>";
-
       if(element.is_favorite) {
         elementHtml += "<button class='favorite btn btn-warning btn-mini' type='button'><i class='icon-white icon-star'></i></button> ";
       } else {
         elementHtml += "<button class='favorite btn btn-mini' type='button'><i class='icon-star'></i></button> ";
       }
 
-      elementHtml += "<button class='select btn btn-info btn-mini' type='button'>Select</button></div></div>";
+      elementHtml += "<button class='select btn btn-info btn-mini' type='button'>Select</button></div>";
+
+      elementHtml += "<div class='row align-right'><span class='badge messageListSelector messageListSelector-1'>1</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-2'>2</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-3'>3</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-4'>4</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-5'>5</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-6'>6</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-7'>7</span></div>";
+
+      elementHtml += "</div>";
+
       $("#favorites").prepend(elementHtml);
     }
     $("#nb-favorites").html(json.length);
@@ -336,19 +355,24 @@ var refreshAll = function() {
       elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
       elementHtml += element.msg + "</div></div><div class='row align-right'>";
 
-      elementHtml += "<span class='badge messageListSelector messageListSelector-1'>1</span>";
-      elementHtml += "<span class='badge messageListSelector messageListSelector-2'>2</span>";
-      elementHtml += "<span class='badge messageListSelector messageListSelector-3'>3</span>";
-      elementHtml += "<span class='badge messageListSelector messageListSelector-4'>4</span>";
-      elementHtml += "<span class='badge messageListSelector messageListSelector-5'>5</span>";
-
       if(element.is_favorite) {
         elementHtml += "<button class='favorite btn btn-warning btn-mini' type='button'><i class='icon-white icon-star'></i></button> ";
       } else {
         elementHtml += "<button class='favorite btn btn-mini' type='button'><i class='icon-star'></i></button> ";
       }
 
-      elementHtml += "<button class='select btn btn-info btn-mini' type='button'>Select</button></div></div>";
+      elementHtml += "<button class='select btn btn-info btn-mini' type='button'>Select</button></div>";
+
+      elementHtml += "<div class='row align-right'><span class='badge messageListSelector messageListSelector-1'>1</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-2'>2</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-3'>3</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-4'>4</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-5'>5</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-6'>6</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-7'>7</span></div>";
+
+      elementHtml += "</div>";
+
       $("#all").prepend(elementHtml);
     }
 

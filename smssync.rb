@@ -29,10 +29,6 @@ require 'yaml'
 # Esendex conf
 # ============
 
-if File.file? "esendex.yml"
-  esendex_conf = YAML.load_file("esendex.yml")
-end
-
 # ======
 # Models
 # ======
@@ -45,6 +41,7 @@ class Message
   property :id, Serial
   property :msg, Text
   property :tel, String
+  property :esendex_id, String
 
   property :created_at, DateTime
   property :validated_at, DateTime
@@ -379,6 +376,10 @@ end
 
 def fetch_messages
 
+  if File.file? "esendex.yml"
+    esendex_conf = YAML.load_file("esendex.yml")
+  end
+
   auth = esendex_conf["auth"]
   http = Net::HTTP.new('api.esendex.com', 80)
 
@@ -401,14 +402,18 @@ def fetch_messages
       body = Nokogiri.XML(response.body)
       esendex_id = message.attribute('id').text
 
-      Message.create(
-        :msg => body.at("bodytext").text,
-        :tel => message.at('from phonenumber').text
-      )
+      if Message.count(:esendex_id => esendex_id) == 0
 
-      req = Net::HTTP::Delete.new("/v1.0/inbox/messages/#{esendex_id}")
-      req.basic_auth auth["login"], auth["pass"]
-      response = http.request(req)
+        Message.create(
+          :msg => body.at("bodytext").text,
+          :tel => message.at('from phonenumber').text
+        )
+
+        req = Net::HTTP::Delete.new("/v1.0/inbox/messages/#{esendex_id}")
+        req.basic_auth auth["login"], auth["pass"]
+        response = http.request(req)
+
+      end
 
     end
 
