@@ -125,6 +125,34 @@ $("#refresh-recents").live("click", function() {
  * Selected
  *****/
 
+var updateListCount = function() {
+  $('#selected_count_all').html($('#selected .message').length);
+  for(i = 1; i <= 5; i++){
+    var listCount = $('#selected_count_list_' + i);
+    listCount.removeClass('warning over');
+
+    listCount.html($('#selected .active.messageListSelector-' + i).length);
+
+    if(parseInt(listCount.html()) == parseInt($('#quota_list_' + i).val())) {
+      listCount.addClass('warning');
+    } else if(parseInt(listCount.html()) > parseInt($('#quota_list_' + i).val())) {
+      listCount.addClass('over');
+    }
+
+  }
+}
+
+var findListIndex = function() {
+  var list = 5;
+  for(i = 1; i <= 5; i++) {
+    if( !$('#selected_count_list_' + i).hasClass('warning') &&
+        !$('#selected_count_list_' + i).hasClass('over') ) {
+      list = i;
+    }
+  }
+  return list;
+}
+
 var refreshSelected = function() {
 
   $.getJSON(root + "/selected.json", function(json) {
@@ -147,43 +175,22 @@ var refreshSelected = function() {
 //      return elementHtml;
 //    });
 //    $("#selected").html(output.join(""));
+
+
     for(i = 0; i < json.messages.length; i++) {
       var element = json.messages[i];
 
       if($("#selected #element-" + element.id).length == 0) {
+
         var elementHtml = "<div id='element-" + element.id + "' class='row-fluid message'><div class='row'>";
         elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='row'>";
         elementHtml += element.msg + "</div><div class='row align-right'>";
 
-        elementHtml += "<span class='badge messageListSelector messageListSelector-1";
-        if(element.list_index == 1) {
-          elementHtml += " active";
-        }
-        elementHtml += "'>1</span>";
-
-        elementHtml += "<span class='badge messageListSelector messageListSelector-2";
-        if(element.list_index == 2) {
-          elementHtml += " active";
-        }
-        elementHtml += "'>2</span>";
-
-        elementHtml += "<span class='badge messageListSelector messageListSelector-3";
-        if(element.list_index == 3) {
-          elementHtml += " active";
-        }
-        elementHtml += "'>3</span>";
-
-        elementHtml += "<span class='badge messageListSelector messageListSelector-4";
-        if(element.list_index == 4) {
-          elementHtml += " active";
-        }
-        elementHtml += "'>4</span>";
-
-        elementHtml += "<span class='badge messageListSelector messageListSelector-5";
-        if(element.list_index == 5) {
-          elementHtml += " active";
-        }
-        elementHtml += "'>5</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-1'>1</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-2'>2</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-3'>3</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-4'>4</span>";
+        elementHtml += "<span class='badge messageListSelector messageListSelector-5'>5</span>";
 
         if(element.is_favorite) {
           elementHtml += "<button class='favorite btn btn-warning btn-mini' type='button'><i class='icon-white icon-star'></i></button> ";
@@ -193,10 +200,17 @@ var refreshSelected = function() {
 
         elementHtml += "<button class='reject btn btn-danger btn-mini' type='button'><i class='icon-trash icon-white'></i></button></div></div>";
         $("#selected").prepend(elementHtml);
+
+        if(element.list_index > 0) {
+          $('#selected #element-' + element.id + ' .messageListSelector-' + element.list_index).addClass('active');
+          $('#selected_count_list_' + element.list_index).html(
+            parseInt($('#selected_count_list_' + element.list_index).html()) + 1
+          );
+        }
       }
     }
 
-    $("#selected_count").html(json.messages.length);
+    updateListCount();
     $("#selected_id").html(json.id);
   });
 
@@ -210,6 +224,7 @@ $('#selected .messageListSelector').live('click', function() {
   $.post(root + "/messages/" + msgId, {action: 'change_list', list_index: button.html()}, function() {
     parent.find('.messageListSelector').removeClass('active');
     button.addClass('active');
+    updateListCount();
   });
 });
 
@@ -267,13 +282,19 @@ var refreshFavorites = function() {
       elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
       elementHtml += element.msg + "</div></div><div class='row align-right'>";
 
+      elementHtml += "<span class='badge messageListSelector messageListSelector-1'>1</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-2'>2</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-3'>3</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-4'>4</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-5'>5</span>";
+
       if(element.is_favorite) {
-        elementHtml += "<button class='favorite btn btn-warning' type='button'><i class='icon-white icon-star'></i></button> ";
+        elementHtml += "<button class='favorite btn btn-warning btn-mini' type='button'><i class='icon-white icon-star'></i></button> ";
       } else {
-        elementHtml += "<button class='favorite btn' type='button'><i class='icon-star'></i></button> ";
+        elementHtml += "<button class='favorite btn btn-mini' type='button'><i class='icon-star'></i></button> ";
       }
 
-      elementHtml += "<button class='select btn btn-info' type='button'>Select</button></div></div>";
+      elementHtml += "<button class='select btn btn-info btn-mini' type='button'>Select</button></div></div>";
       $("#favorites").prepend(elementHtml);
     }
     $("#nb-favorites").html(json.length);
@@ -286,6 +307,14 @@ $("#favorites button.select").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
   $.post(root + "/messages/" + msgId, {action: 'select'}, function() {
+    refreshSelected();
+  });
+});
+
+$("#favorites .messageListSelector").live("click", function() {
+  var parent = $(this).parents(".message");
+  var msgId = parent.attr("id").split("-")[1];
+  $.post(root + "/messages/" + msgId, {action: 'select', list_index: $(this).html()}, function() {
     refreshSelected();
   });
 });
@@ -307,13 +336,19 @@ var refreshAll = function() {
       elementHtml += "<span class='label label-info'>" + element.hours + "</span></div><div class='span10'>";
       elementHtml += element.msg + "</div></div><div class='row align-right'>";
 
+      elementHtml += "<span class='badge messageListSelector messageListSelector-1'>1</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-2'>2</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-3'>3</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-4'>4</span>";
+      elementHtml += "<span class='badge messageListSelector messageListSelector-5'>5</span>";
+
       if(element.is_favorite) {
-        elementHtml += "<button class='favorite btn btn-warning' type='button'><i class='icon-white icon-star'></i></button> ";
+        elementHtml += "<button class='favorite btn btn-warning btn-mini' type='button'><i class='icon-white icon-star'></i></button> ";
       } else {
-        elementHtml += "<button class='favorite btn' type='button'><i class='icon-star'></i></button> ";
+        elementHtml += "<button class='favorite btn btn-mini' type='button'><i class='icon-star'></i></button> ";
       }
 
-      elementHtml += "<button class='select btn btn-info' type='button'>Select</button></div></div>";
+      elementHtml += "<button class='select btn btn-info btn-mini' type='button'>Select</button></div></div>";
       $("#all").prepend(elementHtml);
     }
 
@@ -418,6 +453,16 @@ var refreshStats = function() {
     });
   });
 }
+
+$('.display_list').click(function() {
+  var list = $(this).data('list');
+  if(list == 'all') {
+    $('#selected .message').show();
+  } else {
+    $('#selected .message').hide();
+    $('#selected .active.messageListSelector-' + list).parents('.message').show();
+  }
+});
 
 /******
  * Main

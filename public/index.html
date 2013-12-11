@@ -44,34 +44,34 @@
 
       <!-- Column 3 : list manager -->
       <div class="span2">
-        <h2>Listes</h2>
-        <button class="btn disabled" type="button">Messages: <span id="selected_count_all"></span></button>
-        <button class="btn" type="button" class="display_list" data-list="all">Afficher tout</button>
+        <span class='list_title'><h3>Listes</h3> (<a class='display_list' data-list='all'>Afficher tout</a>)</span>
+        <span>Messages: <span id="selected_count_all" class="selected_count">0</span></span>
 
-        <h3>Liste 1</h3>
-        <button class="btn disabled" type="button">Messages: <span id="selected_count_list_1"></span></button>
-        <button class="btn disabled" type="button">Quota: <span id="quota_list_1"></span></button>
-        <button class="btn" type="button" class="display_list" data-list="1">Afficher Liste</button>
+        <hr>
 
-        <h3>Liste 2</h3>
-        <button class="btn disabled" type="button">Messages: <span id="selected_count_list_2"></span></button>
-        <button class="btn disabled" type="button">Quota: <span id="quota_list_2"></span></button>
-        <button class="btn" type="button" class="display_list" data-list="2">Afficher Liste</button>
+        <span class='list_title'><input type='text' value='Liste 1'/> (<a class='display_list' data-list='1'>Afficher</a>)</span>
+        <span>Messages: <span id="selected_count_list_1" class="selected_count">0</span> / <input type='text' class='quota' id='quota_list_1' value='10'/></span>
 
-        <h3>Liste 3</h3>
-        <button class="btn disabled" type="button">Messages: <span id="selected_count_list_3"></span></button>
-        <button class="btn disabled" type="button">Quota: <span id="quota_list_3"></span></button>
-        <button class="btn" type="button" class="display_list" data-list="3">Afficher Liste</button>
+        <hr>
 
-        <h3>Liste 4</h3>
-        <button class="btn disabled" type="button">Messages: <span id="selected_count_list_4"></span></button>
-        <button class="btn disabled" type="button">Quota: <span id="quota_list_4"></span></button>
-        <button class="btn" type="button" class="display_list" data-list="4">Afficher Liste</button>
+        <span class='list_title'><input type='text' value='Liste 2'/> (<a class='display_list' data-list='2'>Afficher</a>)</span>
+        <span>Messages: <span id="selected_count_list_2" class="selected_count">0</span> / <input type='text' class='quota' id='quota_list_2' value='10'/></span>
 
-        <h3>Liste 5</h3>
-        <button class="btn disabled" type="button">Messages: <span id="selected_count_list_5"></span></button>
-        <button class="btn disabled" type="button">Quota: <span id="quota_list_5"></span></button>
-        <button class="btn" type="button" class="display_list" data-list="5">Afficher Liste</button>
+        <hr>
+
+        <span class='list_title'><input type='text' value='Liste 3'/> (<a class='display_list' data-list='3'>Afficher</a>)</span>
+        <span>Messages: <span id="selected_count_list_3" class="selected_count">0</span> / <input type='text' class='quota' id='quota_list_3' value='10'/></span>
+
+        <hr>
+
+        <span class='list_title'><input type='text' value='Liste 4'/> (<a class='display_list' data-list='4'>Afficher</a>)</span>
+        <span>Messages: <span id="selected_count_list_4" class="selected_count">0</span> / <input type='text' class='quota' id='quota_list_4' value='10'/></span>
+
+        <hr>
+
+        <span class='list_title'><input type='text' value='Liste 5'/> (<a class='display_list' data-list='5'>Afficher</a>)</span>
+        <span>Messages: <span id="selected_count_list_5" class="selected_count">0</span> / <input type='text' class='quota' id='quota_list_5' value='10'/></span>
+
       </div>
 
       <!-- Column 4 : Favorites -->

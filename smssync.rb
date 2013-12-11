@@ -399,20 +399,20 @@ get '/fetch_messages' do
       body = Nokogiri.XML(response.body)
       esendex_id = message.attribute('id').text
 
-      Message.create (
+      Message.create(
         :msg => body.at("bodytext").text,
         :tel => message.at('from phonenumber').text
       )
 
-      req = Net::HTTP::Delete.new("/v1.0/inbox/messages/#{esendex_id}")
-      req.basic_auth auth["login"], auth["pass"]
-      response = http.request(req)
+      #req = Net::HTTP::Delete.new("/v1.0/inbox/messages/#{esendex_id}")
+      #req.basic_auth auth["login"], auth["pass"]
+      #response = http.request(req)
 
     end
 
   end
 
-  return count
+  return 200
 end
 
 

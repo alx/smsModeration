@@ -92,3 +92,31 @@ Color brewer Set2 :
 .messageListSelector-5.active {
   background-color:#a6d854;
 }
+
+.list_title {
+  display: block;
+  width: 100%;
+}
+
+.list_title h3 {
+  display: inline;
+}
+
+.list_title input {
+  margin-top: 10px;
+  width: 50%;
+}
+
+input.quota {
+  width: 20px;
+}
+
+.selected_count {
+  font-weight: bold;
+}
+.selected_count.warning {
+  color: orange;
+}
+.selected_count.over {
+  color: red;
+}
