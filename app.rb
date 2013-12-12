@@ -312,6 +312,7 @@ post '/delete_received' do
     selection.delete(m)
   end
   selection.save
+  return {:status => "ok"}.to_json
 end
 
 post '/messages/:id' do
