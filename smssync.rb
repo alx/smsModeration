@@ -304,6 +304,15 @@ end
 # Messages Actions
 # ================
 
+post '/delete_received' do
+  selection = Selection.last
+  Message.all(:validated_at => nil).each do |m|
+    m.update(:validated_at => Time.now)
+    selection.delete(m)
+  end
+  selection.save
+end
+
 post '/messages/:id' do
 
   msg = Message.get(params[:id])
@@ -320,6 +329,22 @@ post '/messages/:id' do
 
     selection = Selection.last
     selection.messages << msg
+    selection.save
+  when "duplicate"
+
+    new_msg = Message.create(
+      :tel => msg.tel,
+      :msg => msg.msg,
+      :is_valid => true, 
+      :validated_at => Time.now
+    )
+
+    if params[:list_index]
+      msg.update(:list_index => params[:list_index])
+    end
+
+    selection = Selection.last
+    selection.messages << new_msg
     selection.save
 
   when "change_list"
@@ -406,7 +431,8 @@ def fetch_messages
 
         Message.create(
           :msg => body.at("bodytext").text,
-          :tel => message.at('from phonenumber').text
+          :tel => message.at('from phonenumber').text,
+          :esendex_id => esendex_id
         )
 
         req = Net::HTTP::Delete.new("/v1.0/inbox/messages/#{esendex_id}")

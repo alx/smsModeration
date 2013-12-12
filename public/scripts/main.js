@@ -72,8 +72,8 @@ $("#recents-refresh").live("click", function() { refreshRecent(); });
 $("#recents button.select").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
+  $(parent).remove();
   $.post(root + "/messages/" + msgId, {action: 'select', list_index: findListIndex()}, function() {
-    $(parent).remove();
     refreshSelected();
   });
 });
@@ -81,8 +81,8 @@ $("#recents button.select").live("click", function() {
 $("#recents .messageListSelector").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
+  $(parent).remove();
   $.post(root + "/messages/" + msgId, {action: 'select', list_index: $(this).html()}, function() {
-    $(parent).remove();
     refreshSelected();
   });
 });
@@ -90,21 +90,15 @@ $("#recents .messageListSelector").live("click", function() {
 $("#recents button.reject").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
+  $(parent).remove();
   $.post(root + "/messages/" + msgId, {action: 'reject'}, function() {
-    $(parent).remove();
     refreshSelected();
   });
 });
 
 $("#delete-received").live("click", function() {
-  $.each($("#recents .message"), function() {
-    var message = $(this);
-    var msgId = message.attr("id").split("-")[1];
-    $.post(root + "/messages/" + msgId, {action: 'reject'}, function() {
-      message.remove();
-    });
-  });
-  refreshSelected();
+  $("#recents .message").remove();
+  $.post(root + "/delete_received");
 });
 
 $("#hidden-numbers").live("click", function() {
@@ -266,17 +260,15 @@ $("button.favorite").live("click", function() {
 $("#selected button.reject").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
-  $.post(root + "/messages/" + msgId, {action: 'reject'}, function() {
-    $(parent).remove();
-    refreshSelected();
-  });
+  $(parent).remove();
+  $.post(root + "/messages/" + msgId, {action: 'reject'});
+  updateListCount();
 });
 
 $("#new-selection").live("click", function() {
-  $.post(root + "/selection", function() {
-    $("#selected .message").remove();
-    refreshSelected();
-  })
+  $("#selected .message").remove();
+  $("#selected_id").html(parseInt($("#selected_id").html()) + 1);
+  $.post(root + "/selection");
 });
 
 /******
@@ -325,7 +317,7 @@ var refreshFavorites = function() {
 $("#favorites button.select").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
-  $.post(root + "/messages/" + msgId, {action: 'select', list_index: findListIndex()}, function() {
+  $.post(root + "/messages/" + msgId, {action: 'duplicate', list_index: findListIndex()}, function() {
     refreshSelected();
   });
 });
@@ -333,7 +325,7 @@ $("#favorites button.select").live("click", function() {
 $("#favorites .messageListSelector").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
-  $.post(root + "/messages/" + msgId, {action: 'select', list_index: $(this).html()}, function() {
+  $.post(root + "/messages/" + msgId, {action: 'duplicate', list_index: $(this).html()}, function() {
     refreshSelected();
   });
 });
@@ -387,7 +379,7 @@ $("#display-all").live("click", function() {
 $("#all button.select").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
-  $.post(root + "/messages/" + msgId, {action: 'select', list_index: findListIndex()}, function() {
+  $.post(root + "/messages/" + msgId, {action: 'duplicate', list_index: findListIndex()}, function() {
     refreshSelected();
   });
 });
@@ -395,7 +387,7 @@ $("#all button.select").live("click", function() {
 $("#all .messageListSelector").live("click", function() {
   var parent = $(this).parents(".message");
   var msgId = parent.attr("id").split("-")[1];
-  $.post(root + "/messages/" + msgId, {action: 'select', list_index: $(this).html()}, function() {
+  $.post(root + "/messages/" + msgId, {action: 'duplicate', list_index: $(this).html()}, function() {
     refreshSelected();
   });
 });
