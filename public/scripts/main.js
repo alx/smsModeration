@@ -7,6 +7,10 @@ var timeout = 60;
  * Recents
  *****/
 
+var updateNbRecents = function() {
+  $("#nb-recents").html($('#recents .message').length);
+}
+
 var refreshRecent = function() {
 
   $("#recents-timeout").html(timeout);
@@ -62,7 +66,7 @@ var refreshRecent = function() {
         $("#recents").prepend(elementHtml);
       }
     }
-    $("#nb-recents").html(json.length);
+    updateNbRecents();
   });
 
 }
@@ -99,6 +103,7 @@ $("#recents button.reject").live("click", function() {
 $("#delete-received").live("click", function() {
   $("#recents .message").remove();
   $.post(root + "/delete_received");
+  updateNbRecents();
 });
 
 $("#hidden-numbers").live("click", function() {
@@ -269,6 +274,7 @@ $("#new-selection").live("click", function() {
   $("#selected .message").remove();
   $("#selected_id").html(parseInt($("#selected_id").html()) + 1);
   $.post(root + "/selection");
+  updateListCount();
 });
 
 /******
