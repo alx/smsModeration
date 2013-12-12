@@ -305,7 +305,7 @@ end
 # Messages Actions
 # ================
 
-get '/delete_received' do
+post '/delete_received' do
   selection = Selection.last
   messages = Message.all(:validated_at => nil)
   messages.each do |m|
