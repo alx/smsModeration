@@ -343,7 +343,7 @@ post '/messages/:id' do
     )
 
     if params[:list_index]
-      msg.update(:list_index => params[:list_index])
+      new_msg.update(:list_index => params[:list_index])
     end
 
     selection = Selection.last
