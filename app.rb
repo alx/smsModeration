@@ -1,9 +1,10 @@
 # encoding: utf-8
 
-gem 'multi_json', '=1.7.8'
-
 require 'rubygems'
 require 'sinatra'
+
+gem 'multi_json', '=1.7.8'
+
 require 'json'
 require 'date'
 require 'net/http'
@@ -33,7 +34,7 @@ require 'yaml'
 # Models
 # ======
 
-DataMapper.setup(:default, "sqlite3:///#{Dir.pwd}/smssync.db")
+DataMapper.setup(:default, "sqlite3:///#{Dir.pwd}/db/smssync.db")
 
 class Message
   include DataMapper::Resource
@@ -401,8 +402,8 @@ end
 
 def fetch_messages
 
-  if File.file? "esendex.yml"
-    esendex_conf = YAML.load_file("esendex.yml")
+  if File.file? "conf/esendex.yml"
+    esendex_conf = YAML.load_file("conf/esendex.yml")
   end
 
   auth = esendex_conf["auth"]
