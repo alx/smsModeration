@@ -310,7 +310,7 @@ get '/delete_received' do
   messages = Message.all(:validated_at => nil)
   messages.each do |m|
     m.update(:validated_at => Time.now)
-    selection.delete(m)
+    selection.messages.delete(m)
   end
   selection.save
   return {:status => "ok"}.to_json
