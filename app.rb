@@ -307,7 +307,8 @@ end
 
 get '/delete_received' do
   selection = Selection.last
-  Message.all(:validated_at => nil).each do |m|
+  messages = Message.all(:validated_at => nil)
+  message.each do |m|
     m.update(:validated_at => Time.now)
     selection.delete(m)
   end
