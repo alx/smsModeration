@@ -224,6 +224,7 @@ var refreshSelected = function() {
     }
 
     updateListCount();
+    updateNbRecents();
     $("#selected_id").html(json.id);
   });
 
