@@ -411,41 +411,52 @@ def fetch_messages
   auth = esendex_conf["auth"]
   http = Net::HTTP.new('api.esendex.com', 80)
 
-  req = Net::HTTP::Get.new('/v1.0/inbox/messages')
-  req.basic_auth auth["login"], auth["pass"]
-  response = http.request(req)
-  doc = Nokogiri.XML(response.body)
+  begin
 
-  count = doc.at('messageheaders').attribute('count').text().to_i
+    req = Net::HTTP::Get.new('/v1.0/inbox/messages')
+    req.basic_auth auth["login"], auth["pass"]
+    response = http.request(req)
+    doc = Nokogiri.XML(response.body)
 
-  if count > 0
+    count = doc.at('messageheaders').attribute('count').text().to_i
 
-    doc.css('messageheader').each do |message|
+    if count > 0
 
-      body_uri = message.at('body').attribute('uri').text.gsub("http://api.esendex.com", "")
-      req = Net::HTTP::Get.new(body_uri)
-      req.basic_auth auth["login"], auth["pass"]
-      response = http.request(req)
+      doc.css('messageheader').each do |message|
 
-      body = Nokogiri.XML(response.body)
-      esendex_id = message.attribute('id').text
+        begin
+          body_uri = message.at('body').attribute('uri').text.gsub("http://api.esendex.com", "")
+          req = Net::HTTP::Get.new(body_uri)
+          req.basic_auth auth["login"], auth["pass"]
+          response = http.request(req)
 
-      if Message.count(:esendex_id => esendex_id) == 0
+          body = Nokogiri.XML(response.body)
+          esendex_id = message.attribute('id').text
 
-        Message.create(
-          :msg => body.at("bodytext").text,
-          :tel => message.at('from phonenumber').text,
-          :esendex_id => esendex_id
-        )
+          if Message.count(:esendex_id => esendex_id) == 0
 
-        req = Net::HTTP::Delete.new("/v1.0/inbox/messages/#{esendex_id}")
-        req.basic_auth auth["login"], auth["pass"]
-        response = http.request(req)
+            Message.create(
+              :msg => body.at("bodytext").text,
+              :tel => message.at('from phonenumber').text,
+              :esendex_id => esendex_id
+            )
+
+          end
+
+          begin
+            req = Net::HTTP::Delete.new("/v1.0/inbox/messages/#{esendex_id}")
+            req.basic_auth auth["login"], auth["pass"]
+            response = http.request(req)
+          rescue
+          end
+        rescue
+        end
 
       end
 
     end
 
+  rescue
   end
 
 end
