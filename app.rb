@@ -306,13 +306,9 @@ end
 # ================
 
 post '/delete_received' do
-  selection = Selection.last
-  messages = Message.all(:validated_at => nil)
-  messages.each do |m|
+  Message.all(:validated_at => nil).each do |m|
     m.update(:validated_at => Time.now)
-    selection.messages.delete(m)
   end
-  selection.save
   return {:status => "ok"}.to_json
 end
 
