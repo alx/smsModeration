@@ -375,7 +375,7 @@ end
 
 get %r{/messages_(\d+).txt} do |list_index|
   selection = Selection.last
-  messages = selection.messages.all(:list_index => list_index, :order => [ :validated_at.desc ])
+  messages = selection.messages.all(:list_index => list_index, :order => [ :validated_at.asc ])
   return "&vMessageListe=#{messages.map{|m| m.msg}.join('|').gsub("&", "et")}\n&vTxt_version=#{Selection.last.id}&list_index=#{list_index}"
 end
 
