@@ -286,7 +286,7 @@ get '/selected.json' do
 end
 
 get '/recents.json' do
-  return Message.all(:validated_at => nil, :limit => 100).to_json
+  return Message.all(:validated_at => nil, :order => [ :created_at.desc ]).to_json
 end
 
 get '/favorites.json' do
@@ -375,7 +375,7 @@ end
 
 get %r{/messages_(\d+).txt} do |list_index|
   selection = Selection.last
-  messages = selection.messages.all(:list_index => list_index)
+  messages = selection.messages.all(:list_index => list_index, :order => [ :validated_at.desc ])
   return "&vMessageListe=#{messages.map{|m| m.msg}.join('|').gsub("&", "et")}\n&vTxt_version=#{Selection.last.id}&list_index=#{list_index}"
 end
 
