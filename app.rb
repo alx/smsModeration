@@ -335,7 +335,7 @@ post '/messages/:id' do
       :tel => msg.tel,
       :msg => msg.msg,
       :is_valid => true, 
-      :validated_at => Time.now
+      :validated_at => msg.validated_at
     )
 
     if params[:list_index]
